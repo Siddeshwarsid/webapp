@@ -18,7 +18,15 @@ pipeline{
         sh 'docker run gesellix/trufflehog --json https://github.com/Siddeshwarsid/webapp.git > trufflehog'
         sh 'cat trufflehog'
       }
-    }    
+    }
+     stage ('owasp') {
+       steps {
+         sh 'rm owasp* || true'
+         sh 'wget 'https://raw.githubusercontent.com/Siddeshwarsid/webapp/master/owasp-dependency-check.sh'
+         sh 'chmod +x owasp-dependency-check.sh'
+         sh 'bash owasp-dependency-check.sh'
+       }
+     }
     stage('build') {
       steps {
         sh 'mvn clean package'
