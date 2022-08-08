@@ -33,16 +33,17 @@ pipeline{
          withSonarQubeEnv('sonar') {
            sh 'mvn sonar:sonar'
            sh 'cat target/sonar/report-task.txt'
+           
          }
        }
      }
-//      stage('Quality Gate') {
-//        steps {
-//          timeout(time: 1, unit: 'HOURS') {
-//            waitForQualityGate abortPipeline: false, credentialsId: 'sonar'
-//          }
-//        }
-//      }
+     stage('Quality Gate') {
+       steps {
+         timeout(time: 10, unit: 'MINUTES') {
+           waitForQualityGate abortPipeline: true
+         }
+       }
+     }
      
     stage('build') {
       steps {
