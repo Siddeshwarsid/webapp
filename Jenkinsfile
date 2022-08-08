@@ -28,6 +28,29 @@ pipeline{
          sh 'cat /var/lib/jenkins/OWASP-Dependency-Check/reports/dependency-check-report.xml'
        }
      }
+     
+        stage('UNIT TEST'){
+            steps {
+                sh 'mvn test'
+            }
+        }
+
+        stage('INTEGRATION TEST'){
+            steps {
+                sh 'mvn verify -DskipUnitTests'
+            }
+        }
+
+        stage ('CODE ANALYSIS WITH CHECKSTYLE'){
+            steps {
+                sh 'mvn checkstyle:checkstyle'
+            }
+            post {
+                success {
+                    echo 'Generated Analysis Result'
+                }
+            }
+        }
      stage('sonarQube') {
        steps {
          withSonarQubeEnv('sonar') {
@@ -37,13 +60,14 @@ pipeline{
          }
        }
      }
-     stage('Quality Gate') {
-       steps {
-         timeout(time: 10, unit: 'MINUTES') {
-           waitForQualityGate abortPipeline: true
-         }
-       }
-     }
+     
+//      stage('Quality Gate') {
+//        steps {
+//          timeout(time: 10, unit: 'MINUTES') {
+//            waitForQualityGate abortPipeline: true
+//          }
+//        }
+//      }
      
     stage('build') {
       steps {
