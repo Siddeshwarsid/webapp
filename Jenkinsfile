@@ -59,20 +59,28 @@ pipeline{
         }
 
      
-     stage('sonarQube') {
+     stage('build and sonarQube') {
        steps {
          withSonarQubeEnv('sonar') {
-           sh 'mvn sonar:sonar'
+           sh 'mvn clean package sonar:sonar'
            sh 'cat target/sonar/report-task.txt'
          }
        }
      }
+     stage('quality gate') {
+       steps {
+         timeout (time:10, unit: 'MINUTES'} {
+           waitForQualityGate abortPipeline: false
+         }
+       }
+     }
+                  
      
-    stage('build') {
-      steps {
-        sh 'mvn clean package'
-      }
-    }
+//     stage('build') {
+//       steps {
+//         sh 'mvn clean package'
+//       }
+//     }
      
      stage('deploy to tomcat') {
        steps {
