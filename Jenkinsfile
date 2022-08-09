@@ -65,8 +65,8 @@ pipeline{
          withSonarQubeEnv('sonar') {
            sh 'sonar:sonar'
            sh 'cat target/sonar/report-task.txt'
-         }
-         }
+          }
+        }
          
            
            stage("Quality Gate") {
@@ -83,8 +83,8 @@ pipeline{
 //        }
 //         }
 //          }
-       }
-     }
+//        }
+//      }
                   
      
     stage('build') {
