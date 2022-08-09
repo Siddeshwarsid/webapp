@@ -61,18 +61,28 @@ pipeline{
      
      stage('sonarQube') {
        steps {
-         script{ 
+//          script{ 
          withSonarQubeEnv('sonar') {
            sh 'sonar:sonar'
            sh 'cat target/sonar/report-task.txt'
          }
-        timeout (time:10, unit: 'MINUTES') {
-          def qg = waitForQualityGate()
-          if (qg.status != 'OK') {
-            error "pipeline aborted due to quality gate faliure: $(qg.status)"
-       }
-        }
          }
+         
+           
+           stage("Quality Gate") {
+            steps {
+              timeout(time: 1, unit: 'HOURS') {
+                waitForQualityGate abortPipeline: true
+              }
+            }
+          }
+//         timeout (time:10, unit: 'MINUTES') {
+//           def qg = waitForQualityGate()
+//           if (qg.status != 'OK') {
+//             error "pipeline aborted due to quality gate faliure: $(qg.status)"
+//        }
+//         }
+//          }
        }
      }
                   
