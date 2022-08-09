@@ -69,7 +69,7 @@ pipeline{
         timeout (time:10, unit: 'MINUTES') {
           def qg = waitForQualityGate()
           if (qg.status != 'OK') {
-            error "pipeline aborted due t quality gate faliure: $(qg.status)"
+            error "pipeline aborted due to quality gate faliure: $(qg.status)"
        }
         }
          }
