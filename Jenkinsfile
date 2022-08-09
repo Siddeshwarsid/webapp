@@ -59,28 +59,29 @@ pipeline{
         }
 
      
-     stage('build and sonarQube') {
+     stage('sonarQube') {
        steps {
+         script{ 
          withSonarQubeEnv('sonar') {
-           sh 'mvn clean package sonar:sonar'
+           sh 'sonar:sonar'
            sh 'cat target/sonar/report-task.txt'
          }
+        timeout (time:10, unit: 'MINUTES') {
+          def qg = waitForQualityGate()
+          if (qg.status != 'OK') {
+            error "pipeline aborted due t quality gate faliure: $(qg.status)"
        }
-     }
-     stage('quality gate') {
-       steps {
-         timeout (time:10, unit: 'MINUTES') {
-           waitForQualityGate abortPipeline: false
+        }
          }
        }
      }
                   
      
-//     stage('build') {
-//       steps {
-//         sh 'mvn clean package'
-//       }
-//     }
+    stage('build') {
+      steps {
+        sh 'mvn clean package'
+      }
+    }
      
      stage('deploy to tomcat') {
        steps {
